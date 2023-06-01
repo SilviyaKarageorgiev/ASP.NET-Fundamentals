@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ChatApp.Models.Chat
+﻿namespace ChatApp.ViewModels.Chat
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class MessageViewModel
     {
         [Required]
