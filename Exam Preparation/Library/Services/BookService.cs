@@ -1,5 +1,6 @@
 ﻿using Library.Contracts;
 using Library.Data;
+using Library.Data.Models;
 using Library.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,9 +15,24 @@ namespace Library.Services
             this.dbContext = dbContext;
         }
 
-        public Task AddBookToCollectionAsync(string userId, BookViewModel book)
+        public async Task AddBookToCollectionAsync(string userId, BookViewModel book)
         {
-            throw new NotImplementedException();
+            bool alreadyAdded = await dbContext.IdentityUserBooks
+                .AnyAsync(ub => ub.CollectorId == userId && ub.BookId == book.Id);
+
+            if (alreadyAdded)
+            {
+                throw new InvalidOperationException("Book already added to collection.");
+            }
+
+            var userBook = new IdentityUserBook
+            {
+                CollectorId = userId,
+                BookId = book.Id
+            };
+
+            await dbContext.IdentityUserBooks.AddAsync(userBook);
+            await dbContext.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<AllBookViewModel>> GetAllBooksAsync()
